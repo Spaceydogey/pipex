@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 13:08:10 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/22 13:18:58 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/22 16:49:00 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,34 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 
 }
 
+size_t	ft_strcpy(char *dst, const char *src)
+{
+	size_t	i;
+	size_t	srclen;
+
+	i = -1;
+	srclen = -1;
+	while (src[++srclen])
+		;
+	while (src[++i])
+		dst[i] = src[i];
+	dst[i] = '\0';
+	return (srclen);
+}
+
 char *get_path(char **envp)
 {
-	if (strncmp
+	int		i;
+	char	*res;
+
+	i = -1;
+	while (envp[++i])
+	{
+		if (ft_strncmp(envp[i], "PATH", 4) == 0)
+		{
+			ft_strcpy(res, envp[i]);
+			return (res);
+		}
+	}
+	return (NULL);
 }
