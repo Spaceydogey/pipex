@@ -36,7 +36,7 @@ char	**free_all(char **tab, size_t nbr_words)
 	size_t	i;
 
 	i = -1;
-	while (++i < nbr_word)
+	while (++i < nbr_words)
 		free(tab[i]);
 	free(tab);
 	return (NULL);

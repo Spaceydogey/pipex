@@ -50,7 +50,7 @@ char	*get_access(char **path, char *cmd)
 		if (!res)
 			return (NULL);
 		free(tmp);
-		if (access(res,  AT_EACCESS) != -1)
+		if (access(res, 0) != -1)
 			return (res);
 		free(res);
 	}

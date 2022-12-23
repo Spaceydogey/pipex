@@ -23,14 +23,19 @@ int main(int ac, char **av, char **envp)
 	if (!path)
 		return (1);
 	i = -1;
-	while (path[++i])
+/*	while (path[++i])
 	{
 		printf("%s\n", path[i]);
-	}
-	acc = get_access(path, "ls");
+	}*/
+	acc = get_access(path, "wc");
 	if (!acc)
+	{
+		free_tab(path);
 		return (1);
+	}
+	i = -1;
 	free_tab(path);
 	printf("%s\n",acc);
+	free(acc);
 
 }
