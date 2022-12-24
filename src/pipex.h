@@ -18,6 +18,32 @@
 # include <stdlib.h>
 # include <fcntl.h>
 
+typedef struct s_cmd
+{
+	char	*cmd;
+	char	**flags;
+	char	**tab;
+}	t_cmd;
+
+typedef struct s_files
+{
+	char	*input;
+	char	*output;
+}	t_files;
+
+typedef struct s_arg
+{
+	t_files	file;
+	t_cmd	cmd1;
+	t_cmd	cmd2;
+}	t_arg;
+
+typedef struct s_access
+{
+	char	*exec1;
+	char	*exec2;
+}	t_access;
+
 char	**get_path(char **envp);
 char	*ft_strdup(const char *s);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);

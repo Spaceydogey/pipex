@@ -56,4 +56,3 @@ char	*get_access(char **path, char *cmd)
 	}
 	return (NULL);
 }
-
