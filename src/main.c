@@ -12,22 +12,62 @@
 
 #include "pipex.h"
 
-t_cmd	cmd_init(char *str)
+static int	free_all(t_access *exe, t_arg *arg)
+{
+	if (exe)
+	{
+		if (exe->exec1)
+			free(exe->exec1);
+		if (exe->exec1)
+			free(exe->exec2);
+		free(exe);
+	}
+	if (arg)
+	{
+		if (arg->file.input)
+			free(arg->file.input);
+		if (arg->file.output)
+			free(arg->file.output);
+		if (arg->cmd1.tab)
+			free_tab(arg->cmd1.tab);
+		if (arg->cmd2.tab)
+			free_tab(arg->cmd2.tab);
+		free(arg);
+	}
+	return (1);
+}
+static t_cmd	cmd_init(char *str, char *file)
 {
 	t_cmd	res;
 	char	**tab;
+	int		i;
+	char	**tmp;
 
 	res.cmd = NULL;
-	tab = ft_split(str, ' ');
-	if (!tab)
+	tmp = ft_split(str, ' ');
+	if (!tmp)
 		return (res);
-	res.cmd = tab[0];
-	res.flags = &tab[1];
+	res.cmd = tmp[0];
+	i = -1;
+	while (tmp[++i])
+		;
+	res.size = i + 1;// ?? 
+	tab = malloc(sizeof(char *) * (res.size + 1));
+	if (!tab)
+		return (res); //free tmp;
+	i = -1;
+	while (tmp[++i])
+	{
+		tab[i] = tmp[i];
+	}
+	free(tmp);
+	tab[i] = file;
+	tab[i + 1] = NULL;
 	res.tab = tab;
 	return (res);
 }
 
-t_arg	*arg_init(char **av)
+static t_arg	*arg_init(char **av)
 {
 	//free all on return if malloc fails
 	t_arg	*res;
@@ -41,16 +81,16 @@ t_arg	*arg_init(char **av)
 	res->file.output = ft_strdup(av[4]);	
 	if (!res->file.output)
 		return (NULL);
-	res->cmd1 = cmd_init(av[2]);
+	res->cmd1 = cmd_init(av[2], res->file.input);
 	if (!res->cmd1.cmd)
 		return (NULL);
-	res->cmd2 = cmd_init(av[3]);
+	res->cmd2 = cmd_init(av[3], NULL);//add output cmd1 maybe change code layout
 	if (!res->cmd2.cmd)
 		return (NULL);
 	return (res);
 }
 
-t_access	*exe_init(char **path, t_arg *arg)
+static t_access	*exe_init(char **path, t_arg *arg)
 {
 	t_access	*res;
 
@@ -78,22 +118,17 @@ int main(int ac, char **av, char **envp)
 	char		**path;
 	t_access	*exe;
 	t_arg		*arg;
-// add free all function that check that the adress exist before trying to free so it can be used everywhere cause lazy 
+
 	if (ac != 5)
 		return (1);
 	arg = arg_init(av);
 	path = get_path(envp);
 	if (!path)
-		return (1);
+		return (free_all(exe, arg));
 	exe = exe_init(path, arg);
 	if (!exe)
-		return (1); //free path, arg
-	free(exe->exec1);
-	free(exe->exec2);
-	free(exe);
-	free(arg->file.input);
-	free(arg->file.output);
-	free_tab(arg->cmd1.tab);
-	free_tab(arg->cmd2.tab);
-	free(arg);
+		return (free_all(exe, arg)); 
+	//free files str
+	ppx_exec(exe, arg, envp);
+	free_all(exe, arg);
 }

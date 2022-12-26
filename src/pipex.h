@@ -17,11 +17,12 @@
 #include <stdio.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <sys/wait.h>
 
 typedef struct s_cmd
 {
 	char	*cmd;
-	char	**flags;
+	int		size;
 	char	**tab;
 }	t_cmd;
 
@@ -29,6 +30,8 @@ typedef struct s_files
 {
 	char	*input;
 	char	*output;
+	int		fd_in;
+	int		fd_out;
 }	t_files;
 
 typedef struct s_arg
@@ -52,4 +55,5 @@ char    **ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
 size_t  ft_strlen(const char *s);
 char	*free_tab(char **tab);
+void	ppx_exec(t_access *exe, t_arg *arg, char **envp);
 #endif

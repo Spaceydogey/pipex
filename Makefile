@@ -1,7 +1,7 @@
 .SILENT:
 NAME = pipex
 
-FILES = main.c path.c libft_utils.c ft_split.c
+FILES = main.c path.c libft_utils.c ft_split.c exec.c
 
 SRCS = $(addprefix src/, $(FILES))
 
