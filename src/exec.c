@@ -2,27 +2,29 @@
 
 void ppx_exec(t_access *exe, t_arg *arg, char **envp)
 {
-	int	id;
 	int fd[2];
+	int	id1;
+	int	id2;
 //TODO ERR MANAGEMENT	
 ////dup2 
-	if (pipe(fd) == -1); // fd 1 write, read fd 0
+	if (pipe(fd) == -1) // fd 1 write, read fd 0
 		return ; 
-	id = fork();
-	if (id == -1)
+	id1 = fork();
+	if (id1 == -1)
 		return ;
-	if (id == 0)
-	{	//wait cmd1
-		//arg->cmd2.tab[arg->cmd2.size - 1] = //cmd1 out  
-		execve(exe->exec1, arg->cmd2.tab, envp);
-	}
+	if (id1 == 0)
+		execve(exe->exec1, arg->cmd1.tab, envp);//need to tredirect stout into the pipe to use the output of cmd1 in cmd2 then its donzo
 	else
 	{	
-		id = fork();
-		if (id == -1)
+		wait(NULL);
+		id2 = fork();
+		if (id2 == -1)
 			return ;
-		if (id == 0)
-			execve(exe->exec1, arg->cmd1.tab, envp);//need to tredirect stout into the pipe to use the output of cmd1 in cmd2 then its donzo
+		if (id2 == 0)
+		{	
+			arg->cmd2.tab[arg->cmd2.size - 1] = //cmd1 out  
+			execve(exe->exec2, arg->cmd2.tab, envp);
+		}
 	}
 	wait(NULL);
 }
