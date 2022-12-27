@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 12:35:01 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/27 11:26:41 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/27 16:51:03 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static t_cmd	cmd_init(char *str, char *file)
 	i = -1;
 	while (tmp[++i])
 		;
-	res.size = i + 1;// ?? 
+	res.size = i;// ?? 
 	tab = malloc(sizeof(char *) * (res.size + 1));
 	if (!tab)
 		return (res); //free tmp;
@@ -61,8 +61,7 @@ static t_cmd	cmd_init(char *str, char *file)
 		tab[i] = tmp[i];
 	}
 	free(tmp);
-	tab[i] = file;
-	tab[i + 1] = NULL;
+	tab[i] = NULL;
 	res.tab = tab;
 	return (res);
 }
@@ -84,7 +83,7 @@ static t_arg	*arg_init(char **av)
 	res->cmd1 = cmd_init(av[2], res->file.input);
 	if (!res->cmd1.cmd)
 		return (NULL);
-	res->cmd2 = cmd_init(av[3], NULL);//add output cmd1 maybe change code layout
+	res->cmd2 = cmd_init(av[3], res->file.input);//add output cmd1 maybe change code layout
 	if (!res->cmd2.cmd)
 		return (NULL);
 	return (res);
@@ -130,5 +129,5 @@ int main(int ac, char **av, char **envp)
 		return (free_all(exe, arg)); 
 	//free files str
 	ppx_exec(exe, arg, envp);
-	free_all(exe, arg);
+	// free_all(exe, arg);
 }
