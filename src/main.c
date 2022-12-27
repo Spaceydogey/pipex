@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 12:35:01 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/27 16:51:03 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/27 22:24:21 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,5 +129,5 @@ int main(int ac, char **av, char **envp)
 		return (free_all(exe, arg)); 
 	//free files str
 	ppx_exec(exe, arg, envp);
-	// free_all(exe, arg);
+	free_all(exe, arg);
 }
