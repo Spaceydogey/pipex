@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 13:08:10 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/23 15:43:52 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/28 18:30:48 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*get_access(char **path, char *cmd)
 	char	*res;
 	char	*tmp;
 	int		i;
-	
+
 	i = -1;
 	while (path[++i])
 	{
@@ -50,9 +50,11 @@ char	*get_access(char **path, char *cmd)
 		if (!res)
 			return (NULL);
 		free(tmp);
-		if (access(res, 0) != -1)
+		if (access(res, F_OK | X_OK) != -1)
 			return (res);
 		free(res);
 	}
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": command not found\n", 2);
 	return (NULL);
 }

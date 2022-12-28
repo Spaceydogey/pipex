@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 12:35:01 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/27 22:24:21 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/28 18:30:31 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,58 +34,51 @@ static int	free_all(t_access *exe, t_arg *arg)
 			free_tab(arg->cmd2.tab);
 		free(arg);
 	}
-	return (1);
+	return (errno);
 }
-static t_cmd	cmd_init(char *str, char *file)
+
+static t_cmd	cmd_init(char *str)
 {
 	t_cmd	res;
 	char	**tab;
 	int		i;
-	char	**tmp;
 
 	res.cmd = NULL;
-	tmp = ft_split(str, ' ');
-	if (!tmp)
-		return (res);
-	res.cmd = tmp[0];
-	i = -1;
-	while (tmp[++i])
-		;
-	res.size = i;// ?? 
-	tab = malloc(sizeof(char *) * (res.size + 1));
+	tab = ft_split(str, ' ');
 	if (!tab)
-		return (res); //free tmp;
-	i = -1;
-	while (tmp[++i])
-	{
-		tab[i] = tmp[i];
-	}
-	free(tmp);
-	tab[i] = NULL;
+		return (res);
+	res.cmd = tab[0];
 	res.tab = tab;
 	return (res);
 }
 
 static t_arg	*arg_init(char **av)
 {
-	//free all on return if malloc fails
 	t_arg	*res;
-
+	int		fd;
+//free all on return if malloc fails
 	res = malloc(sizeof(t_arg));
 	if (!res)
 		return (NULL);
 	res->file.input = ft_strdup(av[1]);
 	if (!res->file.input)
 		return (NULL);
-	res->file.output = ft_strdup(av[4]);	
+	res->file.output = ft_strdup(av[4]);
 	if (!res->file.output)
 		return (NULL);
-	res->cmd1 = cmd_init(av[2], res->file.input);
+	fd = open(res->file.output, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+	close(fd);
+	res->cmd1 = cmd_init(av[2]);
 	if (!res->cmd1.cmd)
 		return (NULL);
-	res->cmd2 = cmd_init(av[3], res->file.input);//add output cmd1 maybe change code layout
+	res->cmd2 = cmd_init(av[3]);
 	if (!res->cmd2.cmd)
 		return (NULL);
+	if (access(res->file.input, F_OK | X_OK) == -1)
+	{
+		perror(res->file.input);
+		return (NULL);
+	}
 	return (res);
 }
 
@@ -97,37 +90,41 @@ static t_access	*exe_init(char **path, t_arg *arg)
 	if (!res)
 		return (NULL);
 	res->exec1 = get_access(path, arg->cmd1.cmd);
-	if (!res->exec1)
-	{
-		free_tab(path);//free res
-		return (NULL);
-	}
+	// if (!res->exec1)
+	// {
+	// 	strerror(errno);
+	// }
 	res->exec2 = get_access(path, arg->cmd2.cmd);
-	if (!res->exec2)
-	{
-		free_tab(path);//free res and exec1
-		return (NULL);
-	}
+	// if (!res->exec2)
+	// {
+	// 	strerror(errno);
+	// }
 	free_tab(path);
 	return (res);
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
 	char		**path;
 	t_access	*exe;
 	t_arg		*arg;
+	int			res;
 
 	if (ac != 5)
+	{
+		perror("");
 		return (1);
+	}
 	arg = arg_init(av);
+	if (!arg)
+		return (1);
 	path = get_path(envp);
-	if (!path)
-		return (free_all(exe, arg));
 	exe = exe_init(path, arg);
-	if (!exe)
-		return (free_all(exe, arg)); 
-	//free files str
-	ppx_exec(exe, arg, envp);
+	if (!exe->exec2)
+	{
+		return (127);
+	}
+	res = ppx_exec(exe, arg, envp);
 	free_all(exe, arg);
+	return (res);
 }

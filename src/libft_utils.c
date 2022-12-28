@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/23 13:49:16 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/23 15:43:53 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/28 11:18:20 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	if (i < n)
 		return (c1 - c2);
 	return (0);
-
 }
 
 char	*ft_strdup(const char *s)

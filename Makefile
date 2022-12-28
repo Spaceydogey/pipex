@@ -1,7 +1,7 @@
 .SILENT:
 NAME = pipex
 
-FILES = main.c path.c libft_utils.c ft_split.c exec.c
+FILES = main.c path.c libft_utils.c libft_utils2.c ft_split.c exec.c
 
 SRCS = $(addprefix src/, $(FILES))
 
@@ -15,6 +15,8 @@ CC = @cc
 
 RM = @rm -f
 
+INCLUDE = includes/
+
 DETECTED_OS = $(shell uname)
 
 ###__COMPILATION__###
@@ -22,11 +24,11 @@ DETECTED_OS = $(shell uname)
 $(NAME): $(OBJ)
 		$(PRINT_OS)
 		$(PRINT) "$(CYAN)making:\t$(NOCOLOR)$(NAME)"
-		$(CC) $(CFLAGS)  $(OBJ) -o $(NAME)
+		$(CC) $(CFLAGS) -I$(INCLUDE) $(OBJ) -o $(NAME)
 		$(PRINT) "$(GREEN)done:\t$(NOCOLOR)$(NAME)"
 
 .c.o:
-		$(CC) $(CLFAGS)  -c $< -o $(<:.c=.o) 
+		$(CC) $(CLFAGS) -I$(INCLUDE) -c $< -o $(<:.c=.o) 
 
 ###__RULES__###
 
