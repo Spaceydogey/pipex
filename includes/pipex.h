@@ -6,7 +6,7 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 13:09:49 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/28 15:37:29 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/29 16:24:01 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,6 @@ size_t	ft_strlen(const char *s);
 char	*free_tab(char **tab);
 int		ppx_exec(t_access *exe, t_arg *arg, char **envp);
 void	ft_putstr_fd(char *s, int fd);
+void	*input_file_error(t_arg *arg);
+void	*free_all(t_access *exe, t_arg *arg);
 #endif

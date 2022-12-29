@@ -6,36 +6,11 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 12:35:01 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/28 18:30:31 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/29 16:37:22 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-
-static int	free_all(t_access *exe, t_arg *arg)
-{
-	if (exe)
-	{
-		if (exe->exec1)
-			free(exe->exec1);
-		if (exe->exec1)
-			free(exe->exec2);
-		free(exe);
-	}
-	if (arg)
-	{
-		if (arg->file.input)
-			free(arg->file.input);
-		if (arg->file.output)
-			free(arg->file.output);
-		if (arg->cmd1.tab)
-			free_tab(arg->cmd1.tab);
-		if (arg->cmd2.tab)
-			free_tab(arg->cmd2.tab);
-		free(arg);
-	}
-	return (errno);
-}
+#include "../includes/pipex.h"
 
 static t_cmd	cmd_init(char *str)
 {
@@ -56,29 +31,28 @@ static t_arg	*arg_init(char **av)
 {
 	t_arg	*res;
 	int		fd;
-//free all on return if malloc fails
+
 	res = malloc(sizeof(t_arg));
 	if (!res)
 		return (NULL);
 	res->file.input = ft_strdup(av[1]);
 	if (!res->file.input)
-		return (NULL);
+		return (free_all(NULL, res));
 	res->file.output = ft_strdup(av[4]);
 	if (!res->file.output)
-		return (NULL);
+		return (free_all(NULL, res));
 	fd = open(res->file.output, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+	if (fd == -1)
+		return (free_all(NULL, res));
 	close(fd);
 	res->cmd1 = cmd_init(av[2]);
 	if (!res->cmd1.cmd)
-		return (NULL);
+		return (free_all(NULL, res));
 	res->cmd2 = cmd_init(av[3]);
 	if (!res->cmd2.cmd)
-		return (NULL);
-	if (access(res->file.input, F_OK | X_OK) == -1)
-	{
-		perror(res->file.input);
-		return (NULL);
-	}
+		return (free_all(NULL, res));
+	if (access(res->file.input, F_OK | R_OK) == -1)
+		return (input_file_error(res));
 	return (res);
 }
 
@@ -90,16 +64,7 @@ static t_access	*exe_init(char **path, t_arg *arg)
 	if (!res)
 		return (NULL);
 	res->exec1 = get_access(path, arg->cmd1.cmd);
-	// if (!res->exec1)
-	// {
-	// 	strerror(errno);
-	// }
 	res->exec2 = get_access(path, arg->cmd2.cmd);
-	// if (!res->exec2)
-	// {
-	// 	strerror(errno);
-	// }
-	free_tab(path);
 	return (res);
 }
 
@@ -112,7 +77,7 @@ int	main(int ac, char **av, char **envp)
 
 	if (ac != 5)
 	{
-		perror("");
+		ft_putstr_fd("Wrong number of arguments\n", 2);
 		return (1);
 	}
 	arg = arg_init(av);
@@ -120,8 +85,10 @@ int	main(int ac, char **av, char **envp)
 		return (1);
 	path = get_path(envp);
 	exe = exe_init(path, arg);
+	free_tab(path);
 	if (!exe->exec2)
 	{
+		free_all(exe, arg);
 		return (127);
 	}
 	res = ppx_exec(exe, arg, envp);

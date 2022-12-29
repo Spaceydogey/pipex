@@ -6,11 +6,11 @@
 /*   By: hdelmas <hdelmas@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/23 13:49:16 by hdelmas           #+#    #+#             */
-/*   Updated: 2022/12/28 11:18:20 by hdelmas          ###   ########.fr       */
+/*   Updated: 2022/12/29 13:43:22 by hdelmas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../includes/pipex.h"
 
 char	*free_tab(char **tab)
 {
